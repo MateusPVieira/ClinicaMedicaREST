@@ -33,11 +33,16 @@ GET - Retorna a lista de especialidades. */
 $(document).ready(function () {
   //quando o DOM estiver completamente carregado, executa a função-parametro
   waitingScreen('none')
-  $('.addAppointment').click(() => createInputAppointment())
-  $('.addPatient').click(() => createInputPatient())
-  $('.addDoctor').click(() => createInputDoctor())
-  $('.listDoctor').click(() => getData(URL, MEDICOS, 'table'))
-  $('.listPatient').click(() => getData(URL, PACIENTES, 'table'))
+  $('.addAppointment').click((e) => {e.preventDefault() 
+    createInputAppointment()})
+  $('.addPatient').click((e) => {e.preventDefault() 
+    createInputPatient()})
+  $('.addDoctor').click((e) => {e.preventDefault() 
+    createInputDoctor()})
+  $('.listDoctor').click((e) => {e.preventDefault() 
+    getData(URL, MEDICOS, 'table')})
+  $('.listPatient').click((e) => {e.preventDefault() 
+    getData(URL, PACIENTES, 'table')})
 })
 
 function clearMain() {
