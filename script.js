@@ -48,34 +48,41 @@ function clearMain() {
 function createInputAppointment() {
   clearMain()
   waitingScreen('show')
-  getData(URL, MEDICOS, "fill")
-  getData(URL, PACIENTES, "fill")
+  getData(URL, MEDICOS, 'fill')
+  getData(URL, PACIENTES, 'fill')
+
 
   let elements = {
     titulo: $('<h2>').text('Cadastrar nova consulta'),
-    labelMedico: $('<label class="Medicos">').text('Médico'),
-    selectMedico: $('<select class="selectmedicos">'),
-    warnMedico: $('<p class="warninglabel">').text('Médico inválido'),
-    labelPaciente: $('<label class="paciente">').text('Paciente'),
-    selectPaciente: $('<select class="selectpacientes"></select>'),
-    warnPaciente: $('<p class="warninglabel">').text('Paciente inválido'),
-    labelData: $('<label class="agendardata">Data da consulta</label>').text(
-      'Data da consulta'
-    ),
-    inputData: $('<input type="date" class="inputdata"></input>'),
-    warnData: $('<p class="warninglabel">').text('Selecione uma data valida'),
-    labelHora: $('<label class="agendarhora">').text('Hora da consulta'),
-    inputHora: $('<input type="time" class="inputtime">'),
-    warnHora: $('<p class="warninglabel">').text('Selecione um horario valido'),
-    botaoCadastrar: $('<button class="cadastrar">').text('Cadastrar')
+    labelMedico: $('<label>').text('Médico').addClass('h5 form-label'),
+    selectMedico: $('<select class="form-select selectmedicos">'),
+    warnMedico: $('<p>').text('Médico inválido').addClass('text-danger'),
+    labelPaciente: $('<label>').text('Paciente').addClass('h5 form-label'),
+    selectPaciente: $('<select class=" form-select selectpacientes"></select>'),
+    warnPaciente: $('<p>').text('Paciente inválido').addClass('text-danger'),
+    labelData: $('<label>').text('Data da consulta').addClass('h5 form-label'),
+    inputData: $('<input type="date"></input>').addClass('form-control'),
+    warnData: $('<p>').text('Selecione uma data valida').addClass('text-danger'),
+    labelHora: $('<label>').text('Hora da consulta').addClass('h5 form-label'),
+    inputHora: $('<input type="time">').addClass('form-control'),
+    warnHora: $('<p>').text('Selecione um horario valido').addClass('text-danger'),
+    botaoCadastrar: $('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark')
   } // um objetao com os campos da pagina
+ 
   form = $('<form>')
   Object.keys(elements).forEach(key => {
     //itera o objeto e da append na main
     form.append(elements[key])
   })
-  $('main').append(form)
 
+  $('main').append($('<div>').addClass(['col-4', 'm-auto']))
+  $('.col-4').append(form)
+  $('input').change(function (e) {
+    className = $(this).attr('class')
+    if ($(this).val() != '') {
+      $('.warninglabel' + className).remove()
+    }
+  })
   $('.cadastrar').click(function (e) {
     e.preventDefault()
   })
@@ -83,17 +90,22 @@ function createInputAppointment() {
 
 function createInputPatient() {
   clearMain()
-  $('main').append($('<form>'))
-  $('form').append($('<label class="label">').text('Nome'))
-  $('form').append(
-    $('<input id="nome" type="text" placeholder="Nome">')
-  )
-  $('form').append($('<p class="warninglabel">').text('Digite um nome!'))
+  $('main').append($('<div>').addClass(['col-4', 'm-auto']))
+  $('.col-4').append($('<h2>').text('Cadastrar novo paciente')) 
+  $('.col-4').append($('<form>'))
 
-  $('form').append($('<label class="label">').text('Data de Nascimento'))
-  $('form').append($('<input id="data" class="label" type="date">'))
-  $('form').append($('<p class="warninglabel">').text('Selecione uma data de nascimento valida'))
-  $('form').append($('<button class="cadastrar">').text('Cadastrar'))
+  $('form').append($('<label>').text('Nome').addClass('h5 form-label'))
+  $('form').append(
+    $('<input id="nome" type="text" placeholder="Nome">').addClass('h5 form-control')
+  )
+  $('form').append($('<p>').text('Digite um nome!').addClass('text-danger'))
+
+  $('form').append($('<label>').text('Data de Nascimento').addClass('h5 form-label'))
+  $('form').append($('<input id="data" type="date">').addClass('form-control'))
+  $('form').append($('<p>').text('Selecione uma data de nascimento valida' ).addClass('text-danger')
+  )
+  $('form').append($('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark'))
+
 
   $('.cadastrar').click(function (e) {
     e.preventDefault()
@@ -101,10 +113,7 @@ function createInputPatient() {
       nome: $('#nome').val(),
       data: $('#data').val()
     }
-  $('#data').bind('change',(e)=>{
-    console.log('lul')
-    console.log(e)
-  })
+
     JSON = JSON.stringify(data)
     console.log(JSON)
     //postData(URL, PACIENTES, JSON)
@@ -114,19 +123,23 @@ function createInputPatient() {
 function createInputDoctor() {
   clearMain()
   waitingScreen('show')
-  getData(URL, ESPECIALIDADES, "fill")
+  getData(URL, ESPECIALIDADES, 'fill')
 
-  $('main').append($('<form>'))
-  $('form').append($('<label class="label">').text('Nome'))
+  $('main').append($('<div>').addClass(['col-4', 'm-auto']))
+  $('.col-4').append($('<h2>').text('Cadastrar novo médico')) 
+  $('.col-4').append($('<form>'))
+ 
+  $('form').append($('<label>').text('Nome').addClass('h5 form-label'))
   $('form').append(
-    $('<input id="nome" class="label" type="text" placeholder="Nome">')
+    $('<input id="nome" type="text" placeholder="Nome">').addClass('form-control')
   )
-  $('form').append($('<p class="warninglabel">').text('Digite um nome!'))
-  $('form').append($('<label class="label">').text('Especialidade'))
+  $('form').append($('<p>').text('Digite um nome!').addClass('text-danger'))
+  $('form').append($('<label>').text('Especialidade').addClass('h5 form-label'))
   $('form').append(
-    $('<select id="especialidade" class="selectespecialidades">')
+    $('<select id=" especialidade" class=" form-select selectespecialidades">')
   )
-  $('form').append($('<button class="cadastrar">').text('Cadastrar'))
+  $('form').append($('<p>').text('Selecione uma especialidade!').addClass('text-danger'))
+  $('form').append($('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark mt-3'))
 
   $('.cadastrar').click(function (e) {
     e.preventDefault()
@@ -141,22 +154,27 @@ function createInputDoctor() {
   })
 }
 
-function processResult(response, dir, action){
+function processResult(response, dir, action) {
   switch (action) {
-    case "fill":
-      fillSelections(response, dir)      
-      break;
-    
-      case "table":
+    case 'fill':
+      fillSelections(response, dir)
+      break
+
+    case 'table':
       createTable(response, dir)
       break
+
+    case 'modal':
+      createModal(response, dir)
     default:
-      break;
+      break
   }
 }
 
 function fillSelections(response, dir) {
   let field = dir.toLowerCase().split('.')[0]
+  $('.select' + field).append($(' <option hidden disabled selected value></option>'))
+ 
   for (let index = 0; index < response.length; index++) {
     $('.select' + field).append($('<option>').text(response[index].nome))
   }
@@ -191,43 +209,74 @@ function postData(URL, dir, JSON) {
   })
 }
 
-function createTable(response, dir){
+function createTable(response, dir) {
   clearMain()
   waitingScreen('show')
-  let especialidades = {1: "Cardiologista", 2: "Oftalmologista", 3:"Ortopedista", 4: "Oncologista", 5: "Cirurgia Geral", 6:"Anestesista",  7: "Psiquiatra"}
-  let ths = []
-  $('main').append('<table>')
+  let especialidades = {
+    1: 'Cardiologista',
+    2: 'Oftalmologista',
+    3: 'Ortopedista',
+    4: 'Oncologista',
+    5: 'Cirurgia Geral',
+    6: 'Anestesista',
+    7: 'Psiquiatra'
+  }
+  let thsKeys = []
+  $('main').append('<table>').addClass('table table-hover')
   $('table').append('<tr>')
-  $('tr').append('<th><th><th><th>')
+  $('tr').append('<th><th><th><th colspan=3>')
 
   for (let index = 0; index < response.length; index++) {
-    $('table').append('<tr class= "'+index+'">')
-    for (let key in response[index]){
-      if (ths.length < 4){
-        ths.push(key)
+    let id
+    $('table').append('<tr class= "' + index + '">')
+    for (let key in response[index]) {
+      if (thsKeys.length < 4) {
+        thsKeys.push(adjustTH(key))
+
       }
-    if(key =='id'){ 
-      let id = response[index][key]
-      console.log(id)
-      console.log(index)
-      $('.'+index).addClass([id])
-      $('.'+id).removeClass([index])
+      if (key == 'id') {
+        id = response[index][key]
 
-      
-    } else if(key == 'idEspecialidade'){
+        $('.' + index).addClass([id])
+        $('.' + id).removeClass([index])
 
-      $('table').append($('<td>').text(especialidades[response[index][key]]))
-    } else {
+      } else if (key == 'idEspecialidade') {
 
-      $('table').append($('<td>').text(response[index][key]))  
+        $('.' + id).append($('<td>').text(especialidades[response[index][key]]))
+      } else {
+        $('.' + id).append($('<td>').text(response[index][key]))
+      }
     }
+    $('.' + id).append($('<td>').append($('<button >').text('Ver consultas').addClass("btn btn-success")));
+    $('.' + id).append($('<td>').append($('<button>').text('Editar').addClass("btn btn-warning")))
+    $('.' + id).append($('<td>').append($('<button>').text('Deletar').addClass("btn btn-danger")))
   }
-
+  ths = $('th')
+  thsKeys.shift()
+  thsKeys.push('Ações')
+  for (let i=0; i<thsKeys.length; i++) {
+    ths[i].innerText= thsKeys[i]
   }
-
   waitingScreen('none')
 }
 
+
+function adjustTH(key){
+  switch (key) {
+    case "idEspecialidade":
+      return "Especialidade"      
+    case "nome":
+      return "Nome"      
+    case "dataNascimento":
+      return "Data de Nascimento"      
+    case "dataNascimento":
+      return "Data de Nascimento"      
+    case "dataCadastro":
+      return "Data de Cadastro"        
+    default:
+      break;
+  }
+}
 
 function waitingScreen(action) {
   if (action == 'show') {

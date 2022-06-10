@@ -8,9 +8,11 @@
   <title>Document</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 
-<body>
+<body class="container-fluid">
   <div id="waitingScreen">
   <div class="waiting">
     <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -18,25 +20,31 @@
 </div>
 <div class="alerta"></div>
 </div>
-  <nav>
-    <div class="dropdown pacientes">
-      <button class="dropbutton ">Pacientes</button>
-      <div class="dropcontent">
-        <a class="listPatient" href="#">Listar</a>
-        <a class="addPatient"href="#">Cadastrar</a>
-      </div>
-    <div class="dropdown medicos">
-      <button class="dropbutton ">Medicos</button>
-      <div class="dropcontent">
-        <a class="listDoctor" href="#">Listar</a>
-        <a class="addDoctor" href="#">Cadastrar</a>
-      </div>
-      <button class="addAppointment">Adicionar consulta</button>
-    </div>
+  <nav class = "row nav">
+    <ul class="nav nav-tabs">
+      <li class="pacientes nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Pacientes</a>
+        <ul class="dropdown-menu">
+          <li><a class="listPatient dropdown-item" href="#">Listar</a></li>
+          <li><a class="addPatient dropdown-item" href="#">Cadastrar</a></li>
+        </ul>
+      </li>
+      <li class="medicos nav-item  dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Médicos</a>
+        <ul class="dropdown-menu">
+          <li><a class="listDoctor dropdown-item" href="#">Listar</a></li>
+          <li><a class="addDoctor dropdown-item" href="#">Cadastrar</a></li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="addAppointment nav-link" href="#">Adicionar consulta</a>
+      </li>
   </nav>
-  <main>
+  <main class="row text-center">
 
   </main>
+  <!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
   <script src="script.js"></script>
 </body>
 
