@@ -3,32 +3,6 @@ const MEDICOS = 'medicos.php'
 const PACIENTES = 'pacientes.php'
 const CONSULTAS = 'consultas.php'
 const ESPECIALIDADES = 'especialidades.php'
-//	https://tiagoifsp.ddns.net/clinicaMedica/medicos.php/171
-// paciente: nome e data de nasc.
-//médico: nome, data de cadastro e especialização (somente uma por médico)
-
-/*As rotas disponíveis são:
-pacientes.php suporta as seguintes operações:
-
-GET - Retorna a lista de pacientes.
-POST - Adiciona um novo paciente. Requer parâmetros nome e dataNascimento (no formato YYYY-MM-DD).
-PUT - Edita um paciente. Requer parâmetros id, nome e dataNascimento (no formato YYYY-MM-DD).
-DELETE - Remove um paciente. Requer parâmetro id (do tipo GET).
-
-medicos.php suporta as seguintes operações:
-GET - Retorna a lista de médicos.
-POST - Adiciona um novo médico. Requer parâmetros nome e idEspecialidade.
-PUT - Edita um médico. Requer parâmetros id, nome e idEspecialidade.
-DELETE - Remove um médico. Requer parâmetro id (do tipo GET).
-
-consultas.php suporta as seguintes operações:
-GET - Retorna a lista de consultas.
-POST - Adiciona uma nova consulta. Requer parâmetros idPaciente e idMedico e data (no formato YYYY-MM-DD HH:mm).
-PUT - Edita uma consulta. Requer parâmetros id, idPaciente e idMedico e data (no formato YYYY-MM-DD HH:mm).
-DELETE - Remove uma consulta. Requer parâmetro id (do tipo GET).
-
-especialidades.php suporta as seguintes operações:
-GET - Retorna a lista de especialidades. */
 
 $(document).ready(function () {
   //quando o DOM estiver completamente carregado, executa a função-parametro
@@ -70,22 +44,22 @@ function createInputAppointment() {
     titulo: $('<h2>').text('Cadastrar nova consulta'),
     labelMedico: $('<label>').text('Médico').addClass('h5 form-label'),
     selectMedico: $('<select class="form-select selectmedicos">'),
-    warnMedico: $('<p>').text('Médico inválido').addClass('text-danger'),
+    warnMedico: $('<p>').text('Médico inválido').addClass('text-danger warnmedico'),
     labelPaciente: $('<label>').text('Paciente').addClass('h5 form-label'),
     selectPaciente: $('<select class=" form-select selectpacientes"></select>'),
-    warnPaciente: $('<p>').text('Paciente inválido').addClass('text-danger'),
+    warnPaciente: $('<p>').text('Paciente inválido').addClass('text-danger warnpaciente'),
     labelData: $('<label>').text('Data da consulta').addClass('h5 form-label'),
     inputData: $('<input id="data" type="date"></input>').addClass(
       'form-control'
     ),
     warnData: $('<p>')
       .text('Selecione uma data valida')
-      .addClass('text-danger'),
+      .addClass('text-danger warndata'),
     labelHora: $('<label>').text('Hora da consulta').addClass('h5 form-label'),
     inputHora: $('<input id="hora" type="time">').addClass('form-control'),
     warnHora: $('<p>')
       .text('Selecione um horario valido')
-      .addClass('text-danger'),
+      .addClass('text-danger warnhora'),
     botaoCadastrar: $('<button>')
       .text('Cadastrar')
       .addClass('cadastrar btn btn-dark')
@@ -99,33 +73,58 @@ function createInputAppointment() {
 
   $('main').append($('<div>').addClass(['col-4', 'm-auto']))
   $('.col-4').append(form)
-  /*$('input, select').change(function (e){
+  $('input, select').change(function (e){
     let vetor = checkInputs('Consulta')[1]
-    for (let index = 0; index < vetor.length-1; index++) {
-      console.log(vetor[index])
-      if(vetor[index] == true){
-        console.log('entrou aisaijsias')
-        let p = $('.text-danger') 
-        console.log(p)
-        p.text('Ok')
-        p.addClass('text-success')
-        p.removeClass('text-danger')
-        }
-      checkInputs()
+
+    let p = $('.warnmedico')
+      if(vetor[0]){
+        let p = $('.warnmedico')
+        changeWarn(p, 'ok')
+    } else{
+      changeWarn(p, 'invalid', 'Médico inválido')
     }
-  })*/
+     p = $('.warnpaciente')
+      if(vetor[1]){
+
+        changeWarn(p, 'ok')
+    } else{
+      changeWarn(p, 'invalid','Paciente inválido')
+    }
+    p = $('.warndata')
+      if(vetor[2] && vetor[4]){
+        
+        changeWarn(p, 'ok')
+    } else {
+      console.log('koe')
+      changeWarn(p, 'invalid','Selecione uma data valida')
+    }
+    p = $('.warnhora')
+      if(vetor[3]){        
+        changeWarn(p, 'ok')
+    } else {
+      changeWarn(p, 'invalid','Selecione um horario valido')
+    }
+  })
+
+
   $('.cadastrar').click(function (e) {
     e.preventDefault()
 
+
     if (checkInputs('Consulta')[0]) {
+      let data ={ //Requer parâmetros idPaciente e idMedico e data (no formato YYYY-MM-DD HH:mm)
+        "idPaciente": $('.selectpacientes').val(),
+        "idMedico": $('.selectmedicos').val(),
+        "data":$('#data').val() + " " + $('#hora').val()
+      }
       let p = $('.text-danger')
       p.text('Ok')
       p.addClass('text-success')
       p.removeClass('text-danger')
-      //postData(URL, PACIENTES, JSON)
+      postData(URL, CONSULTAS, data)
       createInputAppointment()
     } else {
-      createJalert('formulario ', 'formulário', ' inválido')
+      createJalert('fail', 'formulário', ' inválido')
     }
   })
 }
@@ -142,7 +141,7 @@ function createInputPatient() {
       'h5 form-control'
     )
   )
-  $('form').append($('<p>').text('Digite um nome!').addClass('text-danger'))
+  $('form').append($('<p>').text('Digite um nome!').addClass('text-danger warnnome'))
 
   $('form').append(
     $('<label>').text('Data de Nascimento').addClass('h5 form-label')
@@ -151,29 +150,45 @@ function createInputPatient() {
   $('form').append(
     $('<p>')
       .text('Selecione uma data de nascimento valida')
-      .addClass('text-danger')
+      .addClass('text-danger warndata')
   )
   $('form').append(
     $('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark')
   )
+  $('input').change(()=>{
+    let vetor = checkInputs('Paciente')[1]
 
+    let p = $('.warnnome')
+      if(vetor[0]){
+        changeWarn(p, 'ok')
+    } else{
+      changeWarn(p, 'invalid', 'Nome inválido')
+    }
+     p = $('.warndata')
+      if(vetor[1] && vetor[2]){
+
+        changeWarn(p, 'ok')
+    } else{
+      changeWarn(p, 'invalid','Data inválida')
+    }
+  })
   $('.cadastrar').click(function (e) {
     e.preventDefault()
-    let data = {
-      nome: $('#nome').val(),
-      data: $('#data').val()
-    }
 
-    //JSON = JSON.stringify(data)
-    //console.log(JSON)
+
     if (checkInputs('Paciente')[0]) {
+      let data = {
+        "nome": $('#nome').val(),
+        "dataNascimento": $('#data').val()
+      }
       p = $('.text-danger')
       p.text('Ok')
       p.addClass('text-success')
       p.removeClass('text-danger')
+      postData(URL, PACIENTES, data)
       createInputPatient()
     } else {
-      createJalert('formulario ', 'formulário', ' inválido')
+      createJalert('fail', 'formulário', ' inválido')
     }
   })
 }
@@ -193,38 +208,56 @@ function createInputDoctor() {
       'form-control'
     )
   )
-  $('form').append($('<p>').text('Digite um nome!').addClass('text-danger'))
+  $('form').append($('<p>').text('Digite um nome!').addClass('text-danger warnnome'))
   $('form').append($('<label>').text('Especialidade').addClass('h5 form-label'))
   $('form').append(
-    $('<select id=" especialidade" class=" form-select selectespecialidades">')
+    $('<select id="especialidade" class=" form-select selectespecialidades">')
   )
   $('form').append(
-    $('<p>').text('Selecione uma especialidade!').addClass('text-danger')
+    $('<p>').text('Selecione uma especialidade!').addClass('text-danger warnespecialidade')
   )
   $('form').append(
     $('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark mt-3')
   )
+  $('input, select').change(()=>{
+  
+    let vetor = checkInputs('Medico')[1]
+    console.log(vetor)
+    let p = $('.warnnome')
+      if(vetor[0]){
+        changeWarn(p, 'ok')
+    } else{
+      changeWarn(p, 'invalid', 'Nome inválido')
+    }
+     p = $('.warnespecialidade')
+      if(vetor[1]){
+
+        changeWarn(p, 'ok')
+    } else{
+      changeWarn(p, 'invalid','Especialidade inválida')
+    }
+  })
 
   $('.cadastrar').click(function (e) {
     e.preventDefault()
-    data = {
-      nome: $('#nome').val(),
-      data: $('#especialidade').val()
-    }
 
-    //JSON = JSON.stringify(data)
-    //console.log(JSON)
     if (checkInputs('Medico')[0]) {
+      let data = {
+        "nome": $('#nome').val(),
+        "idEspecialidade": $('#especialidade').val() 
+      }
       p = $('.text-danger')
       p.text('Ok')
       p.addClass('text-success')
       p.removeClass('text-danger')
+      postData(URL, MEDICOS, data)
       createInputDoctor()
-      //postData(URL, PACIENTES, JSON)
+
     } else {
-      createJalert('formulario ', 'formulário', ' inválido')
+      createJalert('fail', 'formulário', ' inválido')
     }
   })
+
 }
 
 function processResult(response, dir, action, id) {
@@ -253,11 +286,11 @@ function processResult(response, dir, action, id) {
 function fillSelections(response, dir) {
   let field = dir.toLowerCase().split('.')[0]
   $('.select' + field).append(
-    $(' <option hidden disabled selected value></option>')
+    $(' <option hidden disabled selected value="vazio"></option>')
   )
 
   for (let index = 0; index < response.length; index++) {
-    $('.select' + field).append($('<option>').text(response[index].nome))
+    $('.select' + field).append($('<option value="'+response[index].id+'">').text(response[index].nome))
   }
   waitingScreen('none')
 }
@@ -283,10 +316,27 @@ function postData(URL, dir, JSON) {
     data: JSON,
     dataType: 'JSON',
     success: function () {
-      createJalert(att, field, ' adicionado com sucesso!')
+      createJalert('success', field, ' adicionado com sucesso!')
     },
     error: function () {
-      createJalert(att, field, ' não adicionado!')
+      createJalert('fail', field, ' não adicionado!')
+    }
+  })
+}
+
+function deleteData(URL, dir, id){
+  let field = dir.toLowerCase().split('.')[0]
+  $.ajax({
+    type: 'DELETE',
+    url: URL + dir + "?id=" + id,
+    data: {"id": id},
+    dataType: 'JSON',
+    success: function () {
+      createJalert('success', field, ' deletado com sucesso!')
+      callAgain(dir)
+    },
+    error: function () {
+      createJalert('fail', field, ' não deletado!')
     }
   })
 }
@@ -375,11 +425,20 @@ function createTable(response, dir) {
     )
   }
   // Listeners Botões
+  $('.btn-danger').click(e =>{
+    e.preventDefault()
+    let idButton = e.target.value
+    deleteData(URL, dir, idButton)
+
+  })
+
+
   $('.btn-success').click(e => {
     e.preventDefault()
     let idButton = e.target.value
     getData(URL, CONSULTAS, 'modal', idButton)
   })
+
 
   // Theads
   let ths = $('.list-th') //seleciona os theads
@@ -425,6 +484,38 @@ function adjustNames(data, dir, idSent){
 }
 */
 
+function changeWarn(p, status, msgm){
+  msgm = msgm || ""
+  if (status == 'ok'){
+  p.text('Ok')
+  p.addClass('text-success')
+  p.removeClass('text-danger')
+  } else {
+    p.text(msgm)
+    p.addClass('text-danger')
+    p.removeClass(' text-success')
+  }
+
+}
+
+function callAgain(dir, id){
+  id = id || ""
+  switch (dir) {
+    case MEDICOS:
+      getData(URL, MEDICOS, 'table')
+      break;
+    case PACIENTES:
+      getData(URL, PACIENTES, 'table')
+      break;
+
+    case 'modal':
+      getData(URL, PACIENTES, 'table')
+      break;
+  
+    default:
+      break;
+  }
+}
 function adjustTH(key) {
   switch (key) {
     case 'idEspecialidade':
@@ -498,7 +589,7 @@ function createModal(result, dir, id) {
       } 
       $('.modal' + id + index).append($('<td>').addClass('button' + id + index))
       $('.button' + id + index).append(
-        $('<button class="btn btn-danger">')
+        $('<button class="btn btn-danger btn-dg-modal">')
           .val(resultFilter[index].id)
           .text('Cancelar')
       )
@@ -506,6 +597,13 @@ function createModal(result, dir, id) {
   } else {
     $('.modal-table').append($('<h3>').text('Nenhuma consulta registrada'))
   }
+
+  $(".btn-dg-modal").click((e)=>{
+    e.preventDefault()
+    let idButton = e.target.value
+    deleteData(URL, dir, idButton)
+    $('#myModal').modal('toggle')
+  })
 }
 
 function checkInputs(type) {
@@ -530,7 +628,7 @@ function checkInputs(type) {
 
     case 'Medico':
       inputsValue = [$('input').val() != '']
-      inputsValue.push($('option').is(':selected'))
+      inputsValue.push($('option:selected').val() != 'vazio')
       for (let index = 0; index < inputsValue.length; index++) {
         if (inputsValue[index] == false) {
           result = false
@@ -540,8 +638,9 @@ function checkInputs(type) {
 
     case 'Consulta':
       date = $('#data')
-      inputsValue = [$('.selectmedicos').is(':selected')]
-      inputsValue.push($('.selectpacientes').is(':selected'))
+      inputsValue = [($('.selectmedicos ').val() != null)]
+
+      inputsValue.push($('.selectpacientes').val() != null)
       inputsValue.push(date.val() != '')
       inputsValue.push($('#hora').val() != '')
 
@@ -572,9 +671,9 @@ function waitingScreen(action) {
 
 function createJalert(att, value, msg) {
   $('#alerta').append('<div id="jAlert"> <p id="jAlert_content">')
-  $('#jAlert').text(value + msg)
+  $('#jAlert').text(value.slice(0, -1) + msg)
   $('#jAlert').addClass(att)
   setTimeout(function () {
     $('#jAlert').remove()
-  }, 1000)
+  }, 3000)
 }

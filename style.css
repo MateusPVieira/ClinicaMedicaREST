@@ -3,6 +3,7 @@
   max-width: 60rem!important;
 }
 
+
 #waitingScreen{
   position: absolute;
   width: 100vw;
@@ -105,6 +106,24 @@
   text-align: center;
   top: 0;
   right:  0;
-  height: 40px !important;
 }
 
+div.success{
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+  padding: 10px;
+  margin: 10px;
+  width: auto;
+  background-color: rgb(71, 141, 1);
+  border-radius: 10px;
+}
+
+div.fail{
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+  padding: 10px;
+  margin: 10px;
+  width: auto;
+  background-color: rgb(196, 0, 0);
+  border-radius: 10px;
+}
