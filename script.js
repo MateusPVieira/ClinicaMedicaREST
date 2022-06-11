@@ -277,7 +277,7 @@ function processResult(response, dir, action, id) {
 
     case 'store':
       return {"dados": response, "dir": dir, "id": id}
-      break
+
     default:
       break
   }
@@ -400,29 +400,22 @@ function createTable(response, dir) {
       }
     }
 
-    // Botoes e input para id
-    $('.' + id).append($('<input type="hidden" id="myId">').val(id))
+    // Botoes 
+
     $('.' + id).append(
-      $('<td>').append(
+
         $('<button value="' + id + '" >')
           .text('Ver consultas')
           .addClass('btn btn-success')
       )
-    )
+    
     $('.' + id).append(
-      $('<td>').append(
-        $('<button value="' + id + '">')
-          .text('Editar')
-          .addClass('btn btn-warning')
-      )
-    )
-    $('.' + id).append(
-      $('<td>').append(
+
         $('<button value="' + id + '">')
           .text('Deletar')
-          .addClass('btn btn-danger')
+          .addClass('btn btn-danger m-1')
       )
-    )
+    
   }
   // Listeners Botões
   $('.btn-danger').click(e =>{
@@ -587,9 +580,9 @@ function createModal(result, dir, id) {
 
         }
       } 
-      $('.modal' + id + index).append($('<td>').addClass('button' + id + index))
-      $('.button' + id + index).append(
-        $('<button class="btn btn-danger btn-dg-modal">')
+
+      $('.modal' + id + index).append(
+        $('<button class="btn btn-danger btn-dg-modal m-1">')
           .val(resultFilter[index].id)
           .text('Cancelar')
       )
