@@ -3,7 +3,7 @@ const MEDICOS = 'medicos.php'
 const PACIENTES = 'pacientes.php'
 const CONSULTAS = 'consultas.php'
 const ESPECIALIDADES = 'especialidades.php'
-
+//	https://tiagoifsp.ddns.net/clinicaMedica/medicos.php/171
 // paciente: nome e data de nasc.
 //médico: nome, data de cadastro e especialização (somente uma por médico)
 
@@ -14,35 +14,45 @@ GET - Retorna a lista de pacientes.
 POST - Adiciona um novo paciente. Requer parâmetros nome e dataNascimento (no formato YYYY-MM-DD).
 PUT - Edita um paciente. Requer parâmetros id, nome e dataNascimento (no formato YYYY-MM-DD).
 DELETE - Remove um paciente. Requer parâmetro id (do tipo GET).
-medicos.php suporta as seguintes operações:
 
+medicos.php suporta as seguintes operações:
 GET - Retorna a lista de médicos.
 POST - Adiciona um novo médico. Requer parâmetros nome e idEspecialidade.
 PUT - Edita um médico. Requer parâmetros id, nome e idEspecialidade.
 DELETE - Remove um médico. Requer parâmetro id (do tipo GET).
-consultas.php suporta as seguintes operações:
 
+consultas.php suporta as seguintes operações:
 GET - Retorna a lista de consultas.
 POST - Adiciona uma nova consulta. Requer parâmetros idPaciente e idMedico e data (no formato YYYY-MM-DD HH:mm).
 PUT - Edita uma consulta. Requer parâmetros id, idPaciente e idMedico e data (no formato YYYY-MM-DD HH:mm).
 DELETE - Remove uma consulta. Requer parâmetro id (do tipo GET).
-especialidades.php suporta as seguintes operações:
 
+especialidades.php suporta as seguintes operações:
 GET - Retorna a lista de especialidades. */
 
 $(document).ready(function () {
   //quando o DOM estiver completamente carregado, executa a função-parametro
   waitingScreen('none')
-  $('.addAppointment').click((e) => {e.preventDefault() 
-    createInputAppointment()})
-  $('.addPatient').click((e) => {e.preventDefault() 
-    createInputPatient()})
-  $('.addDoctor').click((e) => {e.preventDefault() 
-    createInputDoctor()})
-  $('.listDoctor').click((e) => {e.preventDefault() 
-    getData(URL, MEDICOS, 'table')})
-  $('.listPatient').click((e) => {e.preventDefault() 
-    getData(URL, PACIENTES, 'table')})
+  $('.addAppointment').click(e => {
+    e.preventDefault()
+    createInputAppointment()
+  })
+  $('.addPatient').click(e => {
+    e.preventDefault()
+    createInputPatient()
+  })
+  $('.addDoctor').click(e => {
+    e.preventDefault()
+    createInputDoctor()
+  })
+  $('.listDoctor').click(e => {
+    e.preventDefault()
+    getData(URL, MEDICOS, 'table')
+  })
+  $('.listPatient').click(e => {
+    e.preventDefault()
+    getData(URL, PACIENTES, 'table')
+  })
 })
 
 function clearMain() {
@@ -56,7 +66,6 @@ function createInputAppointment() {
   getData(URL, MEDICOS, 'fill')
   getData(URL, PACIENTES, 'fill')
 
-
   let elements = {
     titulo: $('<h2>').text('Cadastrar nova consulta'),
     labelMedico: $('<label>').text('Médico').addClass('h5 form-label'),
@@ -66,15 +75,23 @@ function createInputAppointment() {
     selectPaciente: $('<select class=" form-select selectpacientes"></select>'),
     warnPaciente: $('<p>').text('Paciente inválido').addClass('text-danger'),
     labelData: $('<label>').text('Data da consulta').addClass('h5 form-label'),
-    inputData: $('<input type="date"></input>').addClass('form-control'),
-    warnData: $('<p>').text('Selecione uma data valida').addClass('text-danger'),
+    inputData: $('<input id="data" type="date"></input>').addClass(
+      'form-control'
+    ),
+    warnData: $('<p>')
+      .text('Selecione uma data valida')
+      .addClass('text-danger'),
     labelHora: $('<label>').text('Hora da consulta').addClass('h5 form-label'),
-    inputHora: $('<input type="time">').addClass('form-control'),
-    warnHora: $('<p>').text('Selecione um horario valido').addClass('text-danger'),
-    botaoCadastrar: $('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark')
+    inputHora: $('<input id="hora" type="time">').addClass('form-control'),
+    warnHora: $('<p>')
+      .text('Selecione um horario valido')
+      .addClass('text-danger'),
+    botaoCadastrar: $('<button>')
+      .text('Cadastrar')
+      .addClass('cadastrar btn btn-dark')
   } // um objetao com os campos da pagina
- 
-  form = $('<form>')
+
+  let form = $('<form>')
   Object.keys(elements).forEach(key => {
     //itera o objeto e da append na main
     form.append(elements[key])
@@ -82,46 +99,82 @@ function createInputAppointment() {
 
   $('main').append($('<div>').addClass(['col-4', 'm-auto']))
   $('.col-4').append(form)
-  $('input').change(function (e) {
-    className = $(this).attr('class')
-    if ($(this).val() != '') {
-      $('.warninglabel' + className).remove()
+  /*$('input, select').change(function (e){
+    let vetor = checkInputs('Consulta')[1]
+    for (let index = 0; index < vetor.length-1; index++) {
+      console.log(vetor[index])
+      if(vetor[index] == true){
+        console.log('entrou aisaijsias')
+        let p = $('.text-danger') 
+        console.log(p)
+        p.text('Ok')
+        p.addClass('text-success')
+        p.removeClass('text-danger')
+        }
+      checkInputs()
     }
-  })
+  })*/
   $('.cadastrar').click(function (e) {
     e.preventDefault()
+
+    if (checkInputs('Consulta')[0]) {
+      let p = $('.text-danger')
+      p.text('Ok')
+      p.addClass('text-success')
+      p.removeClass('text-danger')
+      //postData(URL, PACIENTES, JSON)
+      createInputAppointment()
+    } else {
+      createJalert('formulario ', 'formulário', ' inválido')
+    }
   })
 }
 
 function createInputPatient() {
   clearMain()
   $('main').append($('<div>').addClass(['col-4', 'm-auto']))
-  $('.col-4').append($('<h2>').text('Cadastrar novo paciente')) 
+  $('.col-4').append($('<h2>').text('Cadastrar novo paciente'))
   $('.col-4').append($('<form>'))
 
   $('form').append($('<label>').text('Nome').addClass('h5 form-label'))
   $('form').append(
-    $('<input id="nome" type="text" placeholder="Nome">').addClass('h5 form-control')
+    $('<input id="nome" type="text" placeholder="Nome">').addClass(
+      'h5 form-control'
+    )
   )
   $('form').append($('<p>').text('Digite um nome!').addClass('text-danger'))
 
-  $('form').append($('<label>').text('Data de Nascimento').addClass('h5 form-label'))
-  $('form').append($('<input id="data" type="date">').addClass('form-control'))
-  $('form').append($('<p>').text('Selecione uma data de nascimento valida' ).addClass('text-danger')
+  $('form').append(
+    $('<label>').text('Data de Nascimento').addClass('h5 form-label')
   )
-  $('form').append($('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark'))
-
+  $('form').append($('<input id="data" type="date">').addClass('form-control'))
+  $('form').append(
+    $('<p>')
+      .text('Selecione uma data de nascimento valida')
+      .addClass('text-danger')
+  )
+  $('form').append(
+    $('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark')
+  )
 
   $('.cadastrar').click(function (e) {
     e.preventDefault()
-    data = {
+    let data = {
       nome: $('#nome').val(),
       data: $('#data').val()
     }
 
-    JSON = JSON.stringify(data)
-    console.log(JSON)
-    //postData(URL, PACIENTES, JSON)
+    //JSON = JSON.stringify(data)
+    //console.log(JSON)
+    if (checkInputs('Paciente')[0]) {
+      p = $('.text-danger')
+      p.text('Ok')
+      p.addClass('text-success')
+      p.removeClass('text-danger')
+      createInputPatient()
+    } else {
+      createJalert('formulario ', 'formulário', ' inválido')
+    }
   })
 }
 
@@ -131,20 +184,26 @@ function createInputDoctor() {
   getData(URL, ESPECIALIDADES, 'fill')
 
   $('main').append($('<div>').addClass(['col-4', 'm-auto']))
-  $('.col-4').append($('<h2>').text('Cadastrar novo médico')) 
+  $('.col-4').append($('<h2>').text('Cadastrar novo médico'))
   $('.col-4').append($('<form>'))
- 
+
   $('form').append($('<label>').text('Nome').addClass('h5 form-label'))
   $('form').append(
-    $('<input id="nome" type="text" placeholder="Nome">').addClass('form-control')
+    $('<input id="nome" type="text" placeholder="Nome">').addClass(
+      'form-control'
+    )
   )
   $('form').append($('<p>').text('Digite um nome!').addClass('text-danger'))
   $('form').append($('<label>').text('Especialidade').addClass('h5 form-label'))
   $('form').append(
     $('<select id=" especialidade" class=" form-select selectespecialidades">')
   )
-  $('form').append($('<p>').text('Selecione uma especialidade!').addClass('text-danger'))
-  $('form').append($('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark mt-3'))
+  $('form').append(
+    $('<p>').text('Selecione uma especialidade!').addClass('text-danger')
+  )
+  $('form').append(
+    $('<button>').text('Cadastrar').addClass('cadastrar btn btn-dark mt-3')
+  )
 
   $('.cadastrar').click(function (e) {
     e.preventDefault()
@@ -153,24 +212,39 @@ function createInputDoctor() {
       data: $('#especialidade').val()
     }
 
-    JSON = JSON.stringify(data)
-    console.log(JSON)
-    //postData(URL, PACIENTES, JSON)
+    //JSON = JSON.stringify(data)
+    //console.log(JSON)
+    if (checkInputs('Medico')[0]) {
+      p = $('.text-danger')
+      p.text('Ok')
+      p.addClass('text-success')
+      p.removeClass('text-danger')
+      createInputDoctor()
+      //postData(URL, PACIENTES, JSON)
+    } else {
+      createJalert('formulario ', 'formulário', ' inválido')
+    }
   })
 }
 
-function processResult(response, dir, action) {
+function processResult(response, dir, action, id) {
+  id = id || ''
   switch (action) {
-    case 'fill':
+    case 'fill': // preencher selects com options através de get
       fillSelections(response, dir)
       break
 
     case 'table':
-      createTable(response, dir)
+      createTable(response, dir) // criar tabelas através de get
       break
 
     case 'modal':
-      createModal(response, dir)
+      createModal(response, dir, id) // modal referente ao botão "consultas"
+      break
+
+    case 'store':
+      return {"dados": response, "dir": dir, "id": id}
+      break
     default:
       break
   }
@@ -178,22 +252,25 @@ function processResult(response, dir, action) {
 
 function fillSelections(response, dir) {
   let field = dir.toLowerCase().split('.')[0]
-  $('.select' + field).append($(' <option hidden disabled selected value></option>'))
- 
+  $('.select' + field).append(
+    $(' <option hidden disabled selected value></option>')
+  )
+
   for (let index = 0; index < response.length; index++) {
     $('.select' + field).append($('<option>').text(response[index].nome))
   }
   waitingScreen('none')
 }
 
-function getData(URL, dir, action) {
+function getData(URL, dir, action, id) {
+  id = id || ''
   $.ajax({
     type: 'GET',
     url: URL + dir,
     data: 'data',
     dataType: 'JSON',
     success: function (response) {
-      processResult(response, dir, action)
+      processResult(response, dir, action, id)
     }
   })
 }
@@ -217,6 +294,7 @@ function postData(URL, dir, JSON) {
 function createTable(response, dir) {
   clearMain()
   waitingScreen('show')
+  // vetor com as especialidades para linkar com idEspecialidades
   let especialidades = {
     1: 'Cardiologista',
     2: 'Oftalmologista',
@@ -226,60 +304,261 @@ function createTable(response, dir) {
     6: 'Anestesista',
     7: 'Psiquiatra'
   }
-  let thsKeys = []
-  $('main').append('<table>').addClass('table table-hover')
-  $('table').append('<tr>')
-  $('tr').append('<th><th><th><th colspan=3>')
 
+  // vetor para armazenas as keys para os Theads
+  let thsKeys = []
+
+  // div que vai receber a tabela
+  $('main').append($('<div>').addClass('col-8 m-auto'))
+
+  //h2
+  $('.col-8').append(
+    $('<h2>').text('Lista de ' + dir.toLowerCase().split('.')[0])
+  )
+
+  //table
+  $('.col-8').append($('<table>').addClass('table list-table'))
+
+  //primeira tr com os th
+  $('.list-table').append('<tr class="list-tr">')
+  $('.list-tr').append(
+    '<th class = "list-th" scope="col"><th class = "list-th" scope="col"><th class = "list-th" scope="col"><th class = "list-th" scope="col" colspan=3>'
+  )
+
+  // iterar json
   for (let index = 0; index < response.length; index++) {
     let id
-    $('table').append('<tr class= "' + index + '">')
+    // row que vai receber os itens do elemento[index]
+    $('.list-table').append('<tr scope="row" class= "' + index + '">')
+
+    // armazena as keys no vetor para os Theads
     for (let key in response[index]) {
       if (thsKeys.length < 4) {
-        thsKeys.push(adjustTH(key))
-
+        thsKeys.push(adjustTH(key)) // adequa o texto que irá para os Theads para exibição na tabela
       }
+
       if (key == 'id') {
         id = response[index][key]
 
+        $('.' + id).append($('<td>').text(especialidades[response[index][key]]))
         $('.' + index).addClass([id])
         $('.' + id).removeClass([index])
-
       } else if (key == 'idEspecialidade') {
-
-        $('.' + id).append($('<td>').text(especialidades[response[index][key]]))
+        $('.' + id).append($('<td>').text(especialidades[response[index][key]])) // substitui o idEspecialidade pelo elemento correspondente no vetor Especialidades
       } else {
         $('.' + id).append($('<td>').text(response[index][key]))
       }
     }
-    $('.' + id).append($('<td>').append($('<button >').text('Ver consultas').addClass("btn btn-success")));
-    $('.' + id).append($('<td>').append($('<button>').text('Editar').addClass("btn btn-warning")))
-    $('.' + id).append($('<td>').append($('<button>').text('Deletar').addClass("btn btn-danger")))
+
+    // Botoes e input para id
+    $('.' + id).append($('<input type="hidden" id="myId">').val(id))
+    $('.' + id).append(
+      $('<td>').append(
+        $('<button value="' + id + '" >')
+          .text('Ver consultas')
+          .addClass('btn btn-success')
+      )
+    )
+    $('.' + id).append(
+      $('<td>').append(
+        $('<button value="' + id + '">')
+          .text('Editar')
+          .addClass('btn btn-warning')
+      )
+    )
+    $('.' + id).append(
+      $('<td>').append(
+        $('<button value="' + id + '">')
+          .text('Deletar')
+          .addClass('btn btn-danger')
+      )
+    )
   }
-  ths = $('th')
-  thsKeys.shift()
-  thsKeys.push('Ações')
-  for (let i=0; i<thsKeys.length; i++) {
-    ths[i].innerText= thsKeys[i]
+  // Listeners Botões
+  $('.btn-success').click(e => {
+    e.preventDefault()
+    let idButton = e.target.value
+    getData(URL, CONSULTAS, 'modal', idButton)
+  })
+
+  // Theads
+  let ths = $('.list-th') //seleciona os theads
+  thsKeys.shift() //retira o id do vetor com os theads
+  thsKeys.push('Ações') // aciona "Ações" ao final do vetor
+
+  for (let i = 0; i < thsKeys.length; i++) {
+    ths[i].innerText = thsKeys[i] //altera os theads
   }
+
+  // retirar modal de waiting
   waitingScreen('none')
 }
 
+/*function preAdjus(dir, id){
+  getData(URL, dir, 'store', id)
+}
 
-function adjustTH(key){
-  switch (key) {
-    case "idEspecialidade":
-      return "Especialidade"      
-    case "nome":
-      return "Nome"      
-    case "dataNascimento":
-      return "Data de Nascimento"      
-    case "dataNascimento":
-      return "Data de Nascimento"      
-    case "dataCadastro":
-      return "Data de Cadastro"        
+function adjustNames(data, dir, idSent){
+  switch (dir) {
+    case MEDICOS:
+      console.log(data)
+      for (let index = 0; index < data.length; index++) {
+        if (data.id == idSent){
+          return data.nome
+        }
+        
+      }
+      break;
+
+    case PACIENTES:
+      for (let index = 0; index < data.length; index++) {
+        if (data.id == idSent){
+          return data.nome
+        }
+      }
+      break;
+  
     default:
       break;
+  }
+
+}
+*/
+
+function adjustTH(key) {
+  switch (key) {
+    case 'idEspecialidade':
+      return 'Especialidade'
+    case 'nome':
+      return 'Nome'
+    case 'dataNascimento':
+      return 'Data de Nascimento'
+    case 'dataNascimento':
+      return 'Data de Nascimento'
+    case 'dataCadastro':
+      return 'Data de Cadastro'
+    case 'idPaciente':
+      return 'Paciente'
+    case 'idMedico':
+      return 'Medico'
+    case 'data':
+      return 'Data da consulta'
+
+    default:
+      break
+  }
+}
+
+function createModal(result, dir, id) {
+  let thsKeysModal = []
+  $('.modal-body').empty()
+  $('#myModal').modal('show')
+  $('#myModal').modal('toggle')
+
+  $('.modal-body').append($('<table>').addClass('table modal-table'))
+  $('.modal-table').append($('<th class="thmodal">'))
+  $('.modal-table').append($('<th class="thmodal">'))
+  $('.modal-table').append($('<th class="thmodal">'))
+  $('.modal-table').append($('<th class="thmodal">'))
+  let resultFilter = []
+  for (let index = 0; index < result.length; index++) {
+    for (let key in result[index]) {
+      if (thsKeysModal.length < 4) {
+        thsKeysModal.push(adjustTH(key)) // adequa o texto que irá para os Theads para exibição na tabela
+      }
+
+      if (result[index][key] == id) {
+        resultFilter.push(result[index])
+      }
+    }
+  }
+
+
+
+  if (resultFilter.length != 0) {
+    let ths = $('.thmodal')
+    thsKeysModal.shift()
+    thsKeysModal.push('Cancelar')
+    for (let i = 0; i < thsKeysModal.length; i++) {
+      ths[i].innerText = thsKeysModal[i] //altera os theads
+    }
+
+    for (let index = 0; index < resultFilter.length; index++) {
+
+      $('.modal-table').append(
+        $('<tr scope="row">').addClass('modal' + id + index)
+      )
+      for (let key in resultFilter[index]) {
+        if(key != 'id'){
+          $('.modal' + id + index).append(
+            $('<td>').text(resultFilter[index][key])
+          )
+
+        }
+      } 
+      $('.modal' + id + index).append($('<td>').addClass('button' + id + index))
+      $('.button' + id + index).append(
+        $('<button class="btn btn-danger">')
+          .val(resultFilter[index].id)
+          .text('Cancelar')
+      )
+    }
+  } else {
+    $('.modal-table').append($('<h3>').text('Nenhuma consulta registrada'))
+  }
+}
+
+function checkInputs(type) {
+  let result = true
+  let inputsValue
+  let date, datenow
+  switch (type) {
+    case 'Paciente':
+      date = $('#data')
+      inputsValue = [$('#nome').val() != '']
+      inputsValue.push(date.val() != '')
+      date = new Date(date.val()).getTime()
+      datenow = new Date().getTime()
+      inputsValue.push(datenow > date)
+
+      for (let index = 0; index < inputsValue.length; index++) {
+        if (inputsValue[index] == false) {
+          result = false
+        }
+      }
+      return [result, inputsValue]
+
+    case 'Medico':
+      inputsValue = [$('input').val() != '']
+      inputsValue.push($('option').is(':selected'))
+      for (let index = 0; index < inputsValue.length; index++) {
+        if (inputsValue[index] == false) {
+          result = false
+        }
+      }
+      return [result, inputsValue]
+
+    case 'Consulta':
+      date = $('#data')
+      inputsValue = [$('.selectmedicos').is(':selected')]
+      inputsValue.push($('.selectpacientes').is(':selected'))
+      inputsValue.push(date.val() != '')
+      inputsValue.push($('#hora').val() != '')
+
+      date = new Date(date.val()).getTime()
+      datenow = new Date().getTime()
+      inputsValue.push(datenow < date)
+
+      for (let index = 0; index < inputsValue.length; index++) {
+        if (inputsValue[index] == false) {
+          result = false
+        }
+      }
+
+      return [result, inputsValue]
+
+    default:
+      break
   }
 }
 
